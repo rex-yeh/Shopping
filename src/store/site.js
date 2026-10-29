@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { apiRequest } from '../lib/api'
+import { isShowcaseMode, showcaseSlides } from '../lib/showcase'
 
 export const useSiteStore = defineStore('site', () => {
-  const slides = ref([])
+  const slides = ref(isShowcaseMode ? showcaseSlides : [])
   const error = ref('')
 
   const loadSlides = async () => {
+    if (isShowcaseMode) return
+
     try {
       slides.value = await apiRequest('/api/slides')
       error.value = ''
@@ -17,6 +20,7 @@ export const useSiteStore = defineStore('site', () => {
   }
 
   const saveSlides = async (nextSlides) => {
+    if (isShowcaseMode) throw new Error('GitHub Pages 展示版不支援編輯輪播。')
     if (!Array.isArray(nextSlides) || nextSlides.length === 0) {
       throw new Error('至少需要一張有效的輪播圖片。')
     }
@@ -28,6 +32,8 @@ export const useSiteStore = defineStore('site', () => {
   }
 
   const uploadImage = async (file) => {
+    if (isShowcaseMode) throw new Error('GitHub Pages 展示版不支援上傳圖片。')
+
     const body = new FormData()
     body.append('image', file)
     const result = await apiRequest('/api/admin/uploads', { method: 'POST', body })

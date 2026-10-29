@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { apiRequest } from '../lib/api'
 import { useCartStore } from '../store/cart'
+import { isShowcaseMode, showcaseProducts } from '../lib/showcase'
 
 const cart = useCartStore()
 const products = ref([])
@@ -17,6 +18,11 @@ const money = (cents) =>
 
 onMounted(async () => {
   try {
+    if (isShowcaseMode) {
+      products.value = showcaseProducts
+      await cart.load()
+      return
+    }
     ;[products.value] = await Promise.all([apiRequest('/api/products'), cart.load()])
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '目前無法載入商品。'
@@ -92,7 +98,7 @@ const addToCart = async (product) => {
       <router-link to="/" class="brand-lockup">
         <span class="brand-mark">日</span><span class="brand-name">好日生活 <small>GOODDAY STUDIO</small></span>
       </router-link>
-      <span>測試商店：訂單付款使用模擬金流，不會實際扣款。</span>
+      <span>{{ isShowcaseMode ? 'GitHub Pages 前端展示版：僅供瀏覽，交易功能未啟用。' : '測試商店：訂單付款使用模擬金流，不會實際扣款。' }}</span>
     </footer>
   </main>
 </template>

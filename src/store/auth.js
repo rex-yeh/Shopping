@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiRequest, initializeCsrf, setCsrfToken } from '../lib/api'
+import { isShowcaseMode } from '../lib/showcase'
 
 const groupPermissions = (permissions) => {
   const groups = new Map()
@@ -49,6 +50,11 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const initialize = () => {
+    if (isShowcaseMode) {
+      initialized.value = true
+      return Promise.resolve()
+    }
+
     if (!initializePromise) {
       initializePromise = (async () => {
         try {

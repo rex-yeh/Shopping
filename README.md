@@ -44,6 +44,12 @@ npm run dev
 
 `npm run build` 建置前端，`npm start` 啟動 API。部署時需由同一個網域提供前端與 `/api`、`/uploads` 路徑，或自行設定反向代理。
 
+### GitHub Pages 前端展示
+
+推送至 `main` 後，GitHub Actions 會自動建置並部署靜態前端。第一次部署前，請到 repository 的 **Settings → Pages → Build and deployment**，將 **Source** 設為 **GitHub Actions**。部署完成後，可從 workflow 的 deployment link 開啟網站，網址格式為 `https://rex-yeh.github.io/Shopping/`。
+
+GitHub Pages 展示模式使用靜態示範商品與輪播，購物車只在目前頁面記憶體中操作；會員、管理後台、API、訂單與付款不會啟用。此展示站不連接正式資料庫，也不提供真實交易功能。
+
 正式環境至少設定：
 
 ```sh

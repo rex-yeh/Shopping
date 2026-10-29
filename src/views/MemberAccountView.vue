@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { apiRequest } from '../lib/api'
 import { useAuthStore } from '../store/auth'
 import { useCartStore } from '../store/cart'
+import { isShowcaseMode } from '../lib/showcase'
 
 const auth = useAuthStore()
 const cart = useCartStore()
@@ -110,7 +111,16 @@ const cancelOrder = async (order) => {
     </header>
 
     <section class="account-main">
-      <section v-if="!auth.user" class="auth-card member-auth-card">
+      <section v-if="!auth.user && isShowcaseMode" class="auth-card member-auth-card">
+        <div class="auth-header">
+          <span class="eyebrow">GOODDAY MEMBERS</span>
+          <h1>會員中心</h1>
+          <p class="auth-description">這是 GitHub Pages 前端展示版，會員登入及訂單功能尚未啟用。</p>
+        </div>
+        <router-link to="/shop" class="store-primary-button">前往選物商城 <span>→</span></router-link>
+      </section>
+
+      <section v-else-if="!auth.user" class="auth-card member-auth-card">
         <div class="auth-header">
           <span class="eyebrow">GOODDAY MEMBERS</span>
           <h1>{{ mode === 'login' ? '會員登入' : '建立會員帳號' }}</h1>

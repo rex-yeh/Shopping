@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { apiRequest } from '../lib/api'
 import { useAuthStore } from '../store/auth'
 import { useCartStore } from '../store/cart'
+import { isShowcaseMode } from '../lib/showcase'
 
 const auth = useAuthStore()
 const cart = useCartStore()
@@ -155,10 +156,13 @@ const completePayment = async () => {
             </form>
           </template>
           <div v-else class="checkout-login-prompt">
-            <p>結帳前請先登入或註冊會員，購物車商品會保留。</p>
-            <router-link :to="{ path: '/account', query: { redirect: '/cart' } }" class="store-primary-button">會員登入 / 註冊 <span>→</span></router-link>
+            <p v-if="isShowcaseMode">這是前端展示版，購物車僅供瀏覽；登入、下單與付款功能未啟用。</p>
+            <template v-else>
+              <p>結帳前請先登入或註冊會員，購物車商品會保留。</p>
+              <router-link :to="{ path: '/account', query: { redirect: '/cart' } }" class="store-primary-button">會員登入 / 註冊 <span>→</span></router-link>
+            </template>
           </div>
-          <p class="payment-test-warning">測試金流不會實際收款。正式金流尚未設定。</p>
+          <p v-if="!isShowcaseMode" class="payment-test-warning">測試金流不會實際收款。正式金流尚未設定。</p>
         </aside>
       </div>
     </section>

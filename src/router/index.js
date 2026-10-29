@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import { isShowcaseMode } from '../lib/showcase'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import AdminView from '../views/AdminView.vue'
@@ -47,8 +48,14 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: isShowcaseMode
+    ? createWebHashHistory(import.meta.env.BASE_URL)
+    : createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior(to) {
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  },
 })
 
 router.beforeEach((to) => {
@@ -56,6 +63,8 @@ router.beforeEach((to) => {
 })
 
 const guardRoute = async (to) => {
+  if (isShowcaseMode) return to.path.startsWith('/admin') ? '/' : true
+
   const auth = useAuthStore()
   await auth.initialize()
 

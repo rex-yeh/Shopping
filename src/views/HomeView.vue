@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useCartStore } from '../store/cart'
 import { useSiteStore } from '../store/site'
+import { isShowcaseMode } from '../lib/showcase'
 
 const site = useSiteStore()
 const cart = useCartStore()
@@ -15,9 +16,11 @@ const showSlide = (index) => {
 }
 
 onMounted(() => {
-  cart.load().catch((error) => {
-    console.error('無法載入購物車。', error)
-  })
+  if (!isShowcaseMode) {
+    cart.load().catch((error) => {
+      console.error('無法載入購物車。', error)
+    })
+  }
   site.loadSlides().catch((error) => {
     console.error('無法載入首頁輪播。', error)
   })
@@ -37,8 +40,8 @@ onUnmounted(() => window.clearInterval(carouselTimer))
 
       <nav class="site-nav" aria-label="主要導覽">
         <router-link to="/shop">選物商城</router-link>
-        <a href="#story">品牌故事</a>
-        <a href="#collection">生活提案</a>
+        <router-link :to="{ path: '/', hash: '#story' }">品牌故事</router-link>
+        <router-link :to="{ path: '/', hash: '#collection' }">生活提案</router-link>
       </nav>
 
       <div class="store-header-actions">
@@ -91,7 +94,7 @@ onUnmounted(() => window.clearInterval(carouselTimer))
         <div>
           <p>好日生活相信，日常裡的小小選擇，會慢慢拼成理想的生活。</p>
           <p>我們走進城市與山海，尋找值得分享的風景、物件與好味道。</p>
-          <a href="#collection" class="text-link">認識好日生活 <span>↗</span></a>
+          <router-link :to="{ path: '/', hash: '#collection' }" class="text-link">認識好日生活 <span>↗</span></router-link>
         </div>
       </div>
       <div class="intro-image">
@@ -114,7 +117,7 @@ onUnmounted(() => window.clearInterval(carouselTimer))
       </div>
 
       <div class="collection-grid row g-3">
-        <a class="collection-card collection-card-large col-12 col-sm-6 col-lg-5" href="#journal">
+        <router-link :to="{ path: '/', hash: '#journal' }" class="collection-card collection-card-large col-12 col-sm-6 col-lg-5">
           <img
             src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1200&q=85"
             alt="精選居家生活物件"
@@ -122,8 +125,8 @@ onUnmounted(() => window.clearInterval(carouselTimer))
           />
           <span class="collection-index">01 / HOME</span>
           <div><h3>把喜歡帶回家</h3><span>居家選物 ↗</span></div>
-        </a>
-        <a class="collection-card col-6 col-lg-3" href="#journal">
+        </router-link>
+        <router-link :to="{ path: '/', hash: '#journal' }" class="collection-card col-6 col-lg-3">
           <img
             src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1000&q=85"
             alt="午後咖啡時光"
@@ -131,8 +134,8 @@ onUnmounted(() => window.clearInterval(carouselTimer))
           />
           <span class="collection-index">02 / TASTE</span>
           <div><h3>日常好好吃</h3><span>風味地圖 ↗</span></div>
-        </a>
-        <a id="journal" class="collection-card col-6 col-lg-4" href="#story">
+        </router-link>
+        <router-link id="journal" :to="{ path: '/', hash: '#story' }" class="collection-card col-6 col-lg-4">
           <img
             src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85"
             alt="山間湖畔的旅行風景"
@@ -140,7 +143,7 @@ onUnmounted(() => window.clearInterval(carouselTimer))
           />
           <span class="collection-index">03 / TRAVEL</span>
           <div><h3>去喜歡的地方</h3><span>週末散步 ↗</span></div>
-        </a>
+        </router-link>
       </div>
     </section>
 
